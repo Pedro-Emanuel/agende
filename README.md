@@ -63,9 +63,14 @@ python agendar.py user01 pass123 20/08/2024 2
 
 > **Atenção**: Esse método armazena as credenciais de login em forma de texto. Não é recomendado para uso em ambientes compartilhados.
 
-O agentamento de refeições pode ser automatizado parcialmente fornecendo as credenciais de login no arquivo `auto_agendar.sh`, basta editar as variáveis `USERNAME` e `PASSWORD`. 
+O agentamento de refeições pode ser automatizado parcialmente fornecendo as credenciais de login. Crie um arquivo com o nome `.env` dentro do diretório do script e adicione as seguintes linhas:
 
-Após editar o arquivo, torne-o executável e então execute-o:
+```env
+USERNAME=sigaa_user
+PASSWORD=sigaa_pass
+```
+
+Após criar o arquivo com as credenciais, torne o `auto_agendar.sh` executável e então execute-o:
 
 ```bash
 chmod +x auto_agendar.sh
