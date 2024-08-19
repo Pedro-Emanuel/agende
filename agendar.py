@@ -70,7 +70,7 @@ class AgendadorRU:
         if horario_value in options:
             horario_agendado.select_by_value(horario_value)
         else:
-            print("No valid horário options found")
+            print("No valid horário options found", end=" ")
             return
 
         cadastrar_button = self.wait_for_element(By.ID, "formulario:cadastrar_agendamento_bt")
@@ -91,7 +91,7 @@ class AgendadorRU:
                     erros.extend(resultado)
                     estado.set()
             except Exception as e:
-                print("Erro ao encontrar elementos de erro:", str(e))
+                print("Erro ao encontrar elementos de erro:", e.__class__.__name__, end=" ")
 
         def encontrar_informativos():
             nonlocal informativos
@@ -101,7 +101,7 @@ class AgendadorRU:
                     informativos.extend(resultado)
                     estado.set()
             except Exception as e:
-                print("Erro ao encontrar elementos informativos:", str(e))
+                print("Erro ao encontrar elementos informativos:", e.__class__.__name__, end=" ")
 
         thread_erros = threading.Thread(target=lambda: encontrar_erros() if not estado.is_set() else None)
         thread_informativos = threading.Thread(target=lambda: encontrar_informativos() if not estado.is_set() else None)
@@ -116,7 +116,7 @@ class AgendadorRU:
         elif informativos:
             print("Sucesso: ", informativos[0].text, end=" ")
         else:
-            print("Indefinido: Nenhuma mensagem encontrada.")
+            print("Indefinido: Nenhuma mensagem encontrada.", end=" ")
 
     def quit(self):
         self.driver.quit()
@@ -136,10 +136,12 @@ def main():
         agendador.navigate_to_agendamento()
         agendador.preencher_formulario(data=args.data, refeicao=TipoRefeicao(args.tipo))
     except Exception as e:
-        print("Erro ao agendar refeição: ", e.__class__.__name__)
-        print(str(e))
+        print("Erro ao agendar refeição: ", e.__class__.__name__, end=" ")
     finally:
-        agendador.quit()
-
+        try:
+            agendador.quit()
+        except Exception as e:
+            print("Erro ao fechar o navegador: ", e.__class__.__name__, end=" ")
+        
 if __name__ == "__main__":
     main()
