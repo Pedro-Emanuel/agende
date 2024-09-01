@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agende"
+version = "0.2.1"
+description = "Agendador automático para o Restaurante Universitário da UFC"
+authors = [{name = "Pedro Emanuel", email = "pedroems.147@gmail.com"}]
+license = {file = "LICENSE"}
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "selenium",
+    "webdriver_manager",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Pedro-Emanuel/agende"
+"Bug Tracker" = "https://github.com/Pedro-Emanuel/agende/issues"
+
+[project.scripts]
+agende = "agende.agende:main"
