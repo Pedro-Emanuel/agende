@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agende"
-version = "0.2.1"
+version = "0.2.2"
 description = "Agendador automático para o Restaurante Universitário da UFC"
 authors = [{name = "Pedro Emanuel", email = "pedroems.147@gmail.com"}]
 license = {file = "LICENSE"}
@@ -18,6 +18,7 @@ classifiers = [
 dependencies = [
     "selenium",
     "webdriver_manager",
+    "getch",
 ]
 
 [project.urls]

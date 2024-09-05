@@ -1,7 +1,9 @@
 import os
 import json
 import time
+import getch
 import threading
+import locale
 from datetime import datetime, timedelta
 from enum import Enum, auto
 
@@ -30,6 +32,19 @@ class AgendadorRU:
         self.usuario, self.senha = self.obter_credenciais()
         self.driver = self._configurar_webdriver()
 
+    def getPass(self):
+        print("Senha: ", end='', flush=True)
+        passwor = ''
+        while True:
+            x = getch.getch()
+            # x = msvcrt.getch().decode("utf-8")
+            if x == '\r' or x == '\n':
+                break
+            print('*', end='', flush=True)
+            passwor +=x
+        print('')
+        return passwor
+
     def obter_credenciais(self):
         arquivo = '.credenciais_agende'
         if os.path.exists(arquivo):
@@ -39,7 +54,7 @@ class AgendadorRU:
         else:
             print("Configuração inicial de credenciais")
             usuario = input("Usuário: ")
-            senha = input("Senha: ")
+            senha = self.getPass()
             with open(arquivo, 'w') as f:
                 json.dump({'usuario': usuario, 'senha': senha}, f)
             print("Credenciais salvas")
@@ -79,19 +94,20 @@ class AgendadorRU:
         print("Navegação concluída")
 
     def ir_para_menu_estudante(self):
-        print("Acessando menu do estudante...")
         self.esperar_elemento(By.CSS_SELECTOR, 'li.menus').find_element(By.TAG_NAME, "a").click()
 
     def navegar_para_agendamento(self):
         print("Acessando agendamento...")
         self.lidar_com_aviso_login()
+        print("Acessando menu do estudante...")
         self.ir_para_menu_estudante()
         menu = self.esperar_elemento(By.ID, "cmAction-96")
         ActionChains(self.driver).move_to_element(menu).perform()
         self.esperar_elemento(By.ID, "cmAction-97").click()
 
     def preencher_formulario(self, data, tipo_refeicao):
-        print(f"Agendando {tipo_refeicao} para {data}")
+        datafmt = datetime.strptime(data, "%d%m%Y").strftime("%d-%m-%Y")
+        print(f"Agendando: {tipo_refeicao} para {datafmt} ({datetime.strptime(data, '%d%m%Y').strftime('%A')})")
         self.esperar_elemento(By.ID, "formulario:tipo_refeicao")
         self.esperar_elemento(By.ID, "formulario:data_agendamento").send_keys(data)
         Select(self.esperar_elemento(By.ID, "formulario:tipo_refeicao")).select_by_value(tipo_refeicao.valor)
@@ -171,11 +187,11 @@ class AgendadorRU:
                 break
 
         print(f"Agendando para {len(dias_agendar)} dias")
+        print('')
         
         for data in dias_agendar:
             data_fmt = data.strftime("%d%m%Y")
-            print(f"Agendando: {data.strftime('%d-%m-%Y')} ({data.strftime('%A')})")
-            
+
             for tipo in TipoRefeicao:
                 try:
                     sucesso, msg = self.preencher_formulario(data_fmt, tipo)
@@ -203,6 +219,9 @@ class AgendadorRU:
 def main():
     print("Agendador Automático do RU")
     agendador = AgendadorRU()
+    
+    locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+        
     try:
         agendador.fazer_login()
         agendador.navegar_para_agendamento()
